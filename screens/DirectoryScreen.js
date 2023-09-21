@@ -19,7 +19,6 @@ const DirectoryScreen = ({ navigation }) => {
       </ListItem>
     );
   };
-
   return (
     <FlatList
       data={campsites}
