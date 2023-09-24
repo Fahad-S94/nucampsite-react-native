@@ -1,11 +1,8 @@
-// import { CAMPSITES } from '../../app/shared/CAMPSITES';
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-// import { CAMPSITES } from '../../app/shared/CAMPSITES'
 import { baseUrl } from '../../shared/baseUrl';
-import { mapImageURL } from '../../utils/mapImageURL';
 
 export const fetchCampsites = createAsyncThunk(
-  'campsite/fetchCampsites',
+  'campsites/fetchCampsites',
   async () => {
     const response = await fetch(baseUrl + 'campsites');
     if (!response.ok) {
@@ -16,54 +13,25 @@ export const fetchCampsites = createAsyncThunk(
   }
 );
 
-const initialState = {
-  campsitesArray: [],
-  isLoading: true,
-  errMsg: '',
-};
-
 const campsitesSlice = createSlice({
   name: 'campsites',
-  initialState,
+  initialState: { isLoading: true, errMess: null, campsitesArray: [] },
   reducers: {},
-  extraReducers: {
-    [fetchCampsites.pending]: (state) => {
-      state.isLoading = true;
-    },
-    [fetchCampsites.fulfilled]: (state, action) => {
-      state.isLoading = false;
-      state.errMsg = '';
-      state.campsiteArray = mapImageURL(action.payload);
-    },
-    [fetchCampsites.rejected]: (state, action) => {
-      state.isLoading = false;
-      state.errMsg = action.error ? action.error.message : 'Fetch Failed';
-    },
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchCampsites.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(fetchCampsites.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.errMess = null;
+        state.campsitesArray = action.payload;
+      })
+      .addCase(fetchCampsites.rejected, (state, action) => {
+        state.isLoading = false;
+        state.errMess = action.error ? action.error.message : 'Fetch failed';
+      });
   },
 });
 
 export const campsitesReducer = campsitesSlice.reducer;
-
-export const selectAllCampsites = (state) => {
-  return state.campsites.campsiteArray;
-};
-
-// export const selectRandomCampsite = () => {
-//     return CAMPSITES[Math.floor(CAMPSITES.length * Math.random())];
-// }
-
-export const selectCampsiteById = (id) => (state) => {
-  return state.campsites.campsitesArray.find(
-    (campsite) => campsite.id === parseInt(id)
-  );
-};
-
-export const selectFeaturedCampsite = (state) => {
-  return {
-    featuredItem: state.campsites.campsitesArray.find(
-      (campsite) => campsite.featured
-    ),
-    isLoading: state.campsites.isLoading,
-    errMsg: state.campsites.errMsg,
-  };
-};

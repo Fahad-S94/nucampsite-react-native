@@ -1,7 +1,5 @@
-// import { PARTNERS } from '../../app/shared/PARTNERS'
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { baseUrl } from '../../shared/baseUrl';
-import { mapImageURL } from '../../utils/mapImageURL';
 
 export const fetchPartners = createAsyncThunk(
   'partners/fetchPartners',
@@ -15,44 +13,25 @@ export const fetchPartners = createAsyncThunk(
   }
 );
 
-const initialState = {
-  partnersArray: [],
-  isLoading: true,
-  errMsg: '',
-};
-
 const partnersSlice = createSlice({
   name: 'partners',
-  initialState,
+  initialState: { isLoading: true, errMess: null, partnersArray: [] },
   reducers: {},
-  extraReducers: {
-    [fetchPartners.pending]: (state) => {
-      state.isLoading = true;
-    },
-    [fetchPartners.fulfilled]: (state, action) => {
-      state.isLoading = false;
-      state.errMsg = '';
-      state.partnersArray = mapImageURL(action.payload);
-    },
-    [fetchPartners.rejected]: (state, action) => {
-      state.isLoading = false;
-      state.errMsg = action.error ? action.error.message : 'Fetch Failed';
-    },
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchPartners.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(fetchPartners.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.errMess = null;
+        state.partnersArray = action.payload;
+      })
+      .addCase(fetchPartners.rejected, (state, action) => {
+        state.isLoading = false;
+        state.errMess = action.error ? action.error.message : 'Fetch failed';
+      });
   },
 });
 
 export const partnersReducer = partnersSlice.reducer;
-
-export const selectAllPartners = (state) => {
-  return state.partners.partnersArray;
-};
-
-export const selectFeaturedPartner = (state) => {
-  return {
-    featuredItem: state.partners.partnersArray.find(
-      (partner) => partner.featured
-    ),
-    isLoading: state.partners.isLoading,
-    errMsg: state.partners.errMsg,
-  };
-};
