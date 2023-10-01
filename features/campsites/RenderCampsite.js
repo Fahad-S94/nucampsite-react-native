@@ -7,9 +7,7 @@ import { useRef } from 'react';
 const RenderCampsite = (props) => {
   const { campsite } = props;
 
-
   const view = useRef();
-
 
   const isLeftSwipe = ({ dx }) => dx < -200;
 
@@ -18,8 +16,10 @@ const RenderCampsite = (props) => {
     onPanResponderGrant: () => {
       view.current
         .rubberBand(1000)
-        .then((endState) => console.log(endState.finished ? 'finished' : 'canceled'))
-    }
+        .then((endState) =>
+          console.log(endState.finished ? 'finished' : 'canceled')
+        );
+    },
     onPanResponderEnd: (e, gestureState) => {
       console.log('pan responder end', gestureState);
       if (isLeftSwipe(gestureState)) {
