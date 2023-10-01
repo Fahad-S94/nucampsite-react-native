@@ -13,7 +13,8 @@ import HomeScreen from './HomeScreen';
 import AboutScreen from './AboutScreen';
 import ContactScreen from './ContactScreen';
 import ReservationScreen from './ReservationScreen';
-import LoginScreen from './LoginScreen';
+import FavoritesScreen from './FavoritesScreen';
+// import LoginScreen from './LoginScreen';
 
 import { Icon } from 'react-native-elements';
 import logo from '../assets/images/logo.png';
@@ -32,17 +33,39 @@ const screenOptions = {
   headerStyle: { backgroundColor: '#5637DD' },
 };
 
-const LoginNavigator = () => {
+// const LoginNavigator = () => {
+//   const Stack = createStackNavigator();
+//   return (
+//     <Stack.Navigator screenOptions={screenOptions}>
+//       <Stack.Screen
+//         name="Login"
+//         component={LoginScreen}
+//         options={({ navigation }) => ({
+//           headerLeft: () => {
+//             <Icon
+//               name="sign-in"
+//               type="font-awesome"
+//               iconStyle={styles.stackIcon}
+//               onPress={() => navigation.toggleDrawer()}
+//             />;
+//           },
+//         })}
+//       />
+//     </Stack.Navigator>
+//   );
+// };
+const FavoritesNavigator = () => {
   const Stack = createStackNavigator();
   return (
     <Stack.Navigator screenOptions={screenOptions}>
       <Stack.Screen
-        name="Login"
-        component={LoginScreen}
+        name="Favorites"
+        component={FavoritesScreen}
         options={({ navigation }) => ({
+          title: 'Favorite Campsites',
           headerLeft: () => {
             <Icon
-              name="sign-in"
+              name="heart"
               type="font-awesome"
               iconStyle={styles.stackIcon}
               onPress={() => navigation.toggleDrawer()}
@@ -211,7 +234,7 @@ const Main = () => {
         drawerContent={CustomDrawerContent}
         drawerStyle={{ backgroundColor: '#CEC8FF' }}
       >
-        <Drawer.Screen
+        {/* <Drawer.Screen
           name="Login"
           component={LoginNavigator}
           options={{
@@ -225,7 +248,7 @@ const Main = () => {
               />
             ),
           }}
-        />
+        /> */}
         <Drawer.Screen
           name="Home"
           component={HomeNavigator}
@@ -266,6 +289,22 @@ const Main = () => {
             drawerIcon: ({ color }) => (
               <Icon
                 name="tree"
+                type="font-awesome"
+                size={24}
+                iconStyle={{ width: 24 }}
+                color={color}
+              />
+            ),
+          }}
+        />
+        <Drawer.Screen
+          name="Favorites"
+          component={FavoritesNavigator}
+          options={{
+            title: 'My Favorites',
+            drawerIcon: ({ color }) => (
+              <Icon
+                name="Heart"
                 type="font-awesome"
                 size={24}
                 iconStyle={{ width: 24 }}
