@@ -238,15 +238,18 @@ const Main = () => {
     dispatch(fetchPromotions());
   }, [dispatch]);
 
+  async function showNetInfo() {
+    await NetInfo.fetch();
+    Platform.OS === 'ios'
+      ? Alert.alert('Initial Network Connectivity Type:', connectionInfo.type)
+      : ToastAndroid.show(
+          'Initial Network Connectivity Type: ' + connectionInfo.type,
+          ToastAndroid.LONG
+        );
+  }
+
   useEffect(() => {
-    NetInfo.fetch().then((connectionInfo) => {
-      Platform.OS === 'ios'
-        ? Alert.alert('Initial Network Connectivity Type:', connectionInfo.type)
-        : ToastAndroid.show(
-            'Initial Network Connectivity Type: ' + connectionInfo.type,
-            ToastAndroid.LONG
-          );
-    });
+    showNetInfo();
 
     const unsubscribeNetInfo = NetInfo.addEventListener((connectionInfo) => {
       handleConnectivityChange(connectionInfo);
@@ -360,7 +363,7 @@ const Main = () => {
             title: 'My Favorites',
             drawerIcon: ({ color }) => (
               <Icon
-                name="Heart"
+                name="heart"
                 type="font-awesome"
                 size={24}
                 iconStyle={{ width: 24 }}

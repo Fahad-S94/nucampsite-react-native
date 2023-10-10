@@ -6,6 +6,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import * as ImagePicker from 'expo-image-picker';
 import { baseUrl } from '../shared/baseUrl';
 import logo from '../assets/images/logo.png';
+import * as ImageManipulator from 'expo-image-manipulator';
 
 const LoginTab = ({ navigation }) => {
   const [username, setUsername] = useState('');
@@ -147,23 +148,50 @@ const RegisterTab = () => {
         allowsEditing: true,
         aspect: [1, 1],
       });
-      if (capturedImage.assets) {
-        console.log(capturedImage.assets[0]);
-        setImageUrl(capturedImage.assets[0].uri);
+      if (!capturedImage.canceled) {
+        console.log(capturedImage);
+        processImage(capturedImage.uri);
       }
     }
   };
 
+  async function processImage(imageUri) {
+    const processedImage = await ImageManipulator.manipulateAsync(
+      imageUri,
+      [{ resize: { width: 400 } }],
+      { format: ImageManipulator.SaveFormat.PNG }
+    );
+    console.log('processedImage', processedImage);
+    setImageUrl(processedImage.uri);
+  }
+
+  async function getImageFromGallery() {
+    const mediaLibraryPermissions =
+      await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+    if (mediaLibraryPermissions.status === 'granted') {
+      const capturedImage = await ImagePicker.launchImageLibraryAsync({
+        allowsEditing: true,
+        aspect: [1, 1],
+      });
+      if (!capturedImage.canceled) {
+        console.log(capturedImage);
+        processImage(capturedImage.uri);
+      }
+    }
+  }
+
   return (
     <ScrollView>
       <View style={StyleSheet.container}>
-        <View style={style.imageContainer}>
+        <View style={styles.imageContainer}>
           <Image
             source={{ uri: imageUrl }}
             loadingIndicatorSource={logo}
             style={styles.image}
           />
           <Button title="Camera" onPress={getImageFromCamera} />
+          <Button title="Gallery" onPress={getImageFromGallery} />
         </View>
         <Input
           placeholder="Username"
